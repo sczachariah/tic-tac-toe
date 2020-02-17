@@ -3,6 +3,7 @@ package com.game.tictactoe.model.catalog;
 public enum GameStatus {
     NONE("NONE"),
     ACTIVE("ACTIVE"),
+    GAME_OVER("GAME_OVER"),
     DRAW("DRAW"),
     WINNER("WINNER");
 

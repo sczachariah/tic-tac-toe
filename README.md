@@ -20,8 +20,7 @@ Tic Tac Toe - API
 <!-- /TOC -->
 
 This Tic Tac Toe game has a grid of 3x3.
-The grids are designated with positions as shown below. To make a move, a player have to select a position.
-At the moment, it doesn't validate the player moves, i.e. any player can make more than one move at a time.  
+The grids are designated with positions as shown below. To make a move, a player have to select a position.  
 
 |     |     |     |
 | --- | --- | --- |

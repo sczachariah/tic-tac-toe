@@ -1,5 +1,6 @@
 package com.game.tictactoe.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.game.tictactoe.jpa.dto.Game;
 import com.game.tictactoe.model.catalog.GameStatus;
 import com.game.tictactoe.services.GamingService;
@@ -22,12 +23,19 @@ import java.util.List;
 public class GamingRestController {
     @Autowired
     private GamingService gamingService;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @ApiOperation(value = "create a new tic-tac-toe game")
     @RequestMapping(method = RequestMethod.POST, value = "/game/create")
     public Object createGame(@RequestParam(value = "player") String playerName) {
         Game response = gamingService.createGame(playerName);
         if (response != null) {
+            try {
+                System.out.println(objectMapper.writeValueAsString(response));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             return response;
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("failed to create a new game");
@@ -39,6 +47,11 @@ public class GamingRestController {
     public Object listAllGames() {
         List<Game> response = gamingService.listAllGames();
         if (response != null) {
+            try {
+                System.out.println(objectMapper.writeValueAsString(response));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             return response;
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("failed to list all games");
@@ -50,6 +63,11 @@ public class GamingRestController {
     public Object joinGame(@PathVariable(value = "id") int id, @RequestParam(value = "player") String playerName) {
         Game response = gamingService.joinGame(id, playerName);
         if (response != null) {
+            try {
+                System.out.println(objectMapper.writeValueAsString(response));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             return response;
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("failed to join game with id: " + id);
@@ -60,7 +78,7 @@ public class GamingRestController {
     @RequestMapping(method = RequestMethod.POST, value = "/game/{id}/move")
     public ResponseEntity<String> performGameMove(@PathVariable(value = "id") int id, @RequestParam(value = "player") String playerName, @RequestParam(value = "move") String move) {
         if (gamingService.performGameMove(id, playerName, move)) {
-            return ResponseEntity.status(HttpStatus.OK).body("null");
+            return ResponseEntity.status(HttpStatus.OK).body("player \"" + playerName + "\" made move \"" + move + "\"successfully.");
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("failed to make move \"" + move + "\" by player \"" + playerName + "\"");
         }
@@ -71,6 +89,11 @@ public class GamingRestController {
     public Object getGameState(@PathVariable(value = "id") int id) {
         Object response = gamingService.getGameState(id);
         if (response != null) {
+            try {
+                System.out.println(objectMapper.writeValueAsString(response));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             return response;
         } else
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("failed to obtain state of game with id: " + id);
@@ -81,6 +104,11 @@ public class GamingRestController {
     public Object getGameStatus(@PathVariable(value = "id") int id) {
         Object response = gamingService.getGameStatus(id);
         if (response != null) {
+            try {
+                System.out.println(objectMapper.writeValueAsString(response));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             return response;
         } else return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("failed to get status of game with id: " + id);
     }
@@ -98,7 +126,7 @@ public class GamingRestController {
     @RequestMapping(method = RequestMethod.POST, value = "/game/{id}/endgame")
     public ResponseEntity<String> endGame(@PathVariable(value = "id") int id) {
         if (gamingService.endGame(id)) {
-            return ResponseEntity.status(HttpStatus.OK).body("null");
+            return ResponseEntity.status(HttpStatus.OK).body("successfully ended game with id: " + id);
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("failed to end game with id:" + id);
         }
