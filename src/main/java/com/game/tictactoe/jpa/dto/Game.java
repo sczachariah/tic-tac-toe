@@ -46,8 +46,8 @@ public class Game {
     @Column(name = "c3")
     private String c3;
 
-    @Column(name = "isclosed")
-    private boolean isClosed;
+    @Column(name = "isGameOver")
+    private boolean isGameOver;
 
     @Column(name = "status")
     private GameStatus status;
@@ -145,12 +145,12 @@ public class Game {
         this.c3 = c3;
     }
 
-    public boolean isClosed() {
-        return isClosed;
+    public boolean isGameOver() {
+        return isGameOver;
     }
 
-    public void setClosed(boolean closed) {
-        isClosed = closed;
+    public void setGameOver(boolean gameOver) {
+        isGameOver = gameOver;
     }
 
     public GameStatus getStatus() {
