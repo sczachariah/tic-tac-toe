@@ -6,6 +6,7 @@ Tic Tac Toe - API
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
 - [How to run](#how-to-run)
+- [Access Application API](#access-application-api)
 - [Endpoints](#endpoints)
 	- [1. POST /api/tictactoe/game/create](#1-post-apitictactoegamecreate)
 	- [2. GET /api/tictactoe/game/listAll](#2-get-apitictactoegamelistall)
@@ -32,11 +33,14 @@ This API exposes following endpoints:
  8. POST /api/tictactoe/game/{id}/endgame
  
 # How to run
-To compile, run tests and build, use the mvn wrapper command below. The java command will start the application.
+To compile, run tests and build, use the mvn wrapper command below. The java command will start the application at http://localhost:8080
 
 ```bash
 $ ./mvnw clean install && java -jar target/tic-tac-toe-1.0-SNAPSHOT.jar
 ```
+
+# Access Application API
+Swagger UI is integrated into the application. Navigate to http://localhost:8080/swagger-ui.html to access the Swagger UI. Swagger UI can be used for invoking different application API's
 
 # Endpoints
 
