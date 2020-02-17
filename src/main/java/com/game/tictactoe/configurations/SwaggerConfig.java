@@ -9,6 +9,7 @@ import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger.web.*;
@@ -21,6 +22,12 @@ import java.time.LocalDate;
 public class SwaggerConfig {
     @Value("${swagger.api.version}")
     private String apiVersion;
+    @Value("${swagger.api.contact.name}")
+    private String apiContactName;
+    @Value("${swagger.api.contact.url}")
+    private String apiContactUrl;
+    @Value("${swagger.api.contact.email}")
+    private String apiContactEmail;
     @Value("${swagger.enabled}")
     private String enabled = "false";
     @Value("${swagger.title}")
@@ -83,6 +90,8 @@ public class SwaggerConfig {
         return new ApiInfoBuilder()
                 .title(title)
                 .description(description)
-                .version(apiVersion).build();
+                .version(apiVersion)
+                .contact(new Contact(apiContactName, apiContactUrl, apiContactEmail))
+                .build();
     }
 }
