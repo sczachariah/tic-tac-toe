@@ -72,7 +72,7 @@ public class SwaggerConfig {
                 .docExpansion(DocExpansion.NONE)
                 .filter(Boolean.valueOf(filter))
                 .maxDisplayedTags(Integer.valueOf(maxDisplayedTags))
-                .operationsSorter(OperationsSorter.ALPHA)
+                .operationsSorter(OperationsSorter.METHOD)
                 .showExtensions(Boolean.valueOf(showExtensions))
                 .tagsSorter(TagsSorter.ALPHA)
                 .supportedSubmitMethods(UiConfiguration.Constants.DEFAULT_SUBMIT_METHODS)
