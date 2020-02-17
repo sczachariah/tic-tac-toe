@@ -1,29 +1,55 @@
 package com.game.tictactoe.services;
 
+import com.game.tictactoe.jpa.dao.GameRepo;
+import com.game.tictactoe.jpa.dao.PlayerRepo;
 import com.game.tictactoe.jpa.dto.Game;
 import com.game.tictactoe.jpa.dto.Player;
 import com.game.tictactoe.model.catalog.GameStatus;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 /**
- * service interface for gaming rest api
+ * service implementation for gaming rest api
  */
 
-public interface GamingService {
-    Game createGame(String playerName);
+@Service("gamingService")
+public class GamingService {
+    @Autowired
+    private GameRepo gameRepo;
+    @Autowired
+    private PlayerRepo playerRepo;
 
-    List<Game> listAllGames();
+    public Game createGame(String playerName) {
+        return null;
+    }
 
-    Game joinGame(int id, String playerName);
+    public List<Game> listAllGames() {
+        return null;
+    }
 
-    boolean performGameMove(int id, String playerName, String move);
+    public Game joinGame(int id, String playerName) {
+        return null;
+    }
 
-    Object getGameState(int id);
+    public boolean performGameMove(int id, String playerName, String move) {
+        return false;
+    }
 
-    GameStatus getGameStatus(int id);
+    public Object getGameState(int id) {
+        return null;
+    }
 
-    Player getGameWinner(int id);
+    public GameStatus getGameStatus(int id) {
+        return null;
+    }
 
-    boolean endGame(int id);
+    public Player getGameWinner(int id) {
+        return null;
+    }
+
+    public boolean endGame(int id) {
+        return false;
+    }
 }
