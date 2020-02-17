@@ -1,7 +1,7 @@
 package com.game.tictactoe.configurations;
 
 
-import com.game.tictactoe.properties.SwaggerConfigProperties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.ResponseEntity;
@@ -19,26 +19,70 @@ import java.time.LocalDate;
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
+    @Value("${swagger.api.version}")
+    private String apiVersion;
+    @Value("${swagger.enabled}")
+    private String enabled = "false";
+    @Value("${swagger.title}")
+    private String title;
+    @Value("${swagger.description}")
+    private String description;
+    @Value("${swagger.useDefaultResponseMessages}")
+    private String useDefaultResponseMessages;
+    @Value("${swagger.enableUrlTemplating}")
+    private String enableUrlTemplating;
+    @Value("${swagger.deepLinking}")
+    private String deepLinking;
+    @Value("${swagger.defaultModelsExpandDepth}")
+    private String defaultModelsExpandDepth;
+    @Value("${swagger.defaultModelExpandDepth}")
+    private String defaultModelExpandDepth;
+    @Value("${swagger.displayOperationId}")
+    private String displayOperationId;
+    @Value("${swagger.displayRequestDuration}")
+    private String displayRequestDuration;
+    @Value("${swagger.filter}")
+    private String filter;
+    @Value("${swagger.maxDisplayedTags}")
+    private String maxDisplayedTags;
+    @Value("${swagger.showExtensions}")
+    private String showExtensions;
+
     @Bean
-    public Docket gameApi(SwaggerConfigProperties swaggerConfigProperties) {
-        return new Docket(DocumentationType.SWAGGER_2).apiInfo(apiInfo(swaggerConfigProperties)).enable(Boolean.valueOf(swaggerConfigProperties.getEnabled())).select().apis(RequestHandlerSelectors.any())
-                .paths(PathSelectors.any()).build().pathMapping("/").directModelSubstitute(LocalDate.class, String.class)
-                .genericModelSubstitutes(ResponseEntity.class).useDefaultResponseMessages(Boolean.valueOf(swaggerConfigProperties.getUseDefaultResponseMessages()))
-                .enableUrlTemplating(Boolean.valueOf(swaggerConfigProperties.getEnableUrlTemplating()));
+    public Docket gameApi() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .apiInfo(apiInfo())
+                .enable(Boolean.parseBoolean(enabled)).select().apis(RequestHandlerSelectors.any())
+                .paths(PathSelectors.any()).build().pathMapping("/")
+                .directModelSubstitute(LocalDate.class, String.class)
+                .genericModelSubstitutes(ResponseEntity.class)
+                .useDefaultResponseMessages(Boolean.parseBoolean(useDefaultResponseMessages))
+                .enableUrlTemplating(Boolean.parseBoolean(enableUrlTemplating));
     }
 
     @Bean
-    UiConfiguration uiConfig(SwaggerConfigProperties swaggerConfigProperties) {
-        return UiConfigurationBuilder.builder().deepLinking(Boolean.valueOf(swaggerConfigProperties.getDeepLinking())).displayOperationId(Boolean.valueOf(swaggerConfigProperties.getDisplayOperationId()))
-                .defaultModelsExpandDepth(Integer.valueOf(swaggerConfigProperties.getDefaultModelsExpandDepth())).defaultModelExpandDepth(Integer.valueOf(swaggerConfigProperties.getDefaultModelExpandDepth()))
-                .defaultModelRendering(ModelRendering.EXAMPLE).displayRequestDuration(Boolean.valueOf(swaggerConfigProperties.getDisplayRequestDuration())).docExpansion(DocExpansion.NONE)
-                .filter(Boolean.valueOf(swaggerConfigProperties.getFilter())).maxDisplayedTags(Integer.valueOf(swaggerConfigProperties.getMaxDisplayedTags())).operationsSorter(OperationsSorter.ALPHA)
-                .showExtensions(Boolean.valueOf(swaggerConfigProperties.getShowExtensions())).tagsSorter(TagsSorter.ALPHA)
-                .supportedSubmitMethods(UiConfiguration.Constants.DEFAULT_SUBMIT_METHODS).validatorUrl(null).build();
+    UiConfiguration uiConfig() {
+        return UiConfigurationBuilder.builder()
+                .deepLinking(Boolean.valueOf(deepLinking))
+                .displayOperationId(Boolean.valueOf(displayOperationId))
+                .defaultModelsExpandDepth(Integer.valueOf(defaultModelsExpandDepth))
+                .defaultModelExpandDepth(Integer.valueOf(defaultModelExpandDepth))
+                .defaultModelRendering(ModelRendering.EXAMPLE)
+                .displayRequestDuration(Boolean.valueOf(displayRequestDuration))
+                .docExpansion(DocExpansion.NONE)
+                .filter(Boolean.valueOf(filter))
+                .maxDisplayedTags(Integer.valueOf(maxDisplayedTags))
+                .operationsSorter(OperationsSorter.ALPHA)
+                .showExtensions(Boolean.valueOf(showExtensions))
+                .tagsSorter(TagsSorter.ALPHA)
+                .supportedSubmitMethods(UiConfiguration.Constants.DEFAULT_SUBMIT_METHODS)
+                .validatorUrl(null).build();
     }
 
-    private ApiInfo apiInfo(SwaggerConfigProperties swaggerConfigProperties) {
-        return new ApiInfoBuilder().title(swaggerConfigProperties.getTitle()).description(swaggerConfigProperties.getDescription())
-                .version(swaggerConfigProperties.getApiVersion()).build();
+    private ApiInfo apiInfo() {
+        return new ApiInfoBuilder()
+                .title(title)
+                .description(description)
+                .version(apiVersion).build();
     }
 }
