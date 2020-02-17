@@ -2,6 +2,7 @@ package com.game.tictactoe.services;
 
 import com.game.tictactoe.jpa.dto.Game;
 import com.game.tictactoe.jpa.dto.Player;
+import com.game.tictactoe.model.catalog.GameStatus;
 
 import java.util.List;
 
@@ -20,7 +21,7 @@ public interface GamingService {
 
     Object getGameState(int id);
 
-    Object getGameStatus(int id);
+    GameStatus getGameStatus(int id);
 
     Player getGameWinner(int id);
 
