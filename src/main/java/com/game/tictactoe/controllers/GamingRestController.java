@@ -62,31 +62,33 @@ public class GamingRestController {
         if (gamingService.performGameMove(id, playerName, move)) {
             return ResponseEntity.status(HttpStatus.OK).body("null");
         } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("failed to make move \"" + move + "\" by player " + playerName);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("failed to make move \"" + move + "\" by player \"" + playerName + "\"");
         }
     }
 
     @ApiOperation(value = "get the current state of a tic-tac-toe game")
     @RequestMapping(method = RequestMethod.GET, value = "/game/{id}/state")
     public Object getGameState(@PathVariable(value = "id") int id) {
-        if (gamingService.getGameState(id) != null) {
-            return gamingService.getGameState(id);
+        Object response = gamingService.getGameState(id);
+        if (response != null) {
+            return response;
         } else
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("failed to obtain state of game with id: " + id);
     }
 
     @ApiOperation(value = "get the status of a tic-tac-toe game")
-    @RequestMapping(method = RequestMethod.GET, value = "/game/{id}/state")
+    @RequestMapping(method = RequestMethod.GET, value = "/game/{id}/status")
     public Object getGameStatus(@PathVariable(value = "id") int id) {
-        if (gamingService.getGameStatus(id) != null) {
-            return gamingService.getGameStatus(id);
+        Object response = gamingService.getGameStatus(id);
+        if (response != null) {
+            return response;
         } else return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("failed to get status of game with id: " + id);
     }
 
     @ApiOperation(value = "get the winner of a tic-tac-toe game")
     @RequestMapping(method = RequestMethod.GET, value = "/game/{id}/getwinner")
     public Object getGameWinner(@PathVariable(value = "id") int id) {
-        if (gamingService.getGameStatus(id).equals(GameStatus.WINNER)) {
+        if (gamingService.getGameStatus(id) != null && gamingService.getGameStatus(id).equals(GameStatus.WINNER)) {
             return gamingService.getGameWinner(id);
         } else
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("game with id \"" + id + "\" do not have a winner.");
