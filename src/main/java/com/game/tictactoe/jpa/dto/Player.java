@@ -13,11 +13,11 @@ public class Player {
     @Id
     @NotNull
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "ID")
     private int id;
 
     @NotNull
-    @Column(name = "name")
+    @Column(name = "NAME")
     private String name;
 
     public Player(String name) {

@@ -16,40 +16,40 @@ public class Game {
     @Id
     @NotNull
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "ID")
     private int id;
 
-    @Column(name = "a1")
+    @Column(name = "A1")
     private String a1;
 
-    @Column(name = "a2")
+    @Column(name = "A2")
     private String a2;
 
-    @Column(name = "a3")
+    @Column(name = "A3")
     private String a3;
 
-    @Column(name = "b1")
+    @Column(name = "B1")
     private String b1;
 
-    @Column(name = "b2")
+    @Column(name = "B2")
     private String b2;
 
-    @Column(name = "b3")
+    @Column(name = "B3")
     private String b3;
 
-    @Column(name = "c1")
+    @Column(name = "C1")
     private String c1;
 
-    @Column(name = "c2")
+    @Column(name = "C2")
     private String c2;
 
-    @Column(name = "c3")
+    @Column(name = "C3")
     private String c3;
 
-    @Column(name = "isGameOver")
+    @Column(name = "IS_GAME_OVER")
     private boolean isGameOver;
 
-    @Column(name = "status")
+    @Column(name = "STATUS")
     private GameStatus status;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -59,7 +59,7 @@ public class Game {
     private Player winner;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "player_id", referencedColumnName = "id")
+    @JoinColumn(name = "PLAYER_ID", referencedColumnName = "ID")
     private List<Player> players;
 
     public Game() {
