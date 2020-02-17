@@ -18,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/tictactoe")
-@Api(value = "Gaming", description = "API for game operations", tags = {"Gaming API"})
+@Api(value = "Gaming", description = "API for tic-tac-toe game operations", tags = {"Gaming API"})
 public class GamingRestController {
     @Autowired
     private GamingService gamingService;

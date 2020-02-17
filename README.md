@@ -20,6 +20,14 @@ Tic Tac Toe - API
 <!-- /TOC -->
 
 This Tic Tac Toe game has a grid of 3x3. At the moment, it doesn't validate the player moves, i.e. any player can make more than one move at a time.
+The grids are designated with positions as shown below. To make a move, a player have to select a position.  
+
+|     |     |     |
+| --- | --- | --- |
+| A1  | A2  | A3  |
+| B1  | B2  | B3  |
+| C1  | C2  | C3  |
+
 
 This API exposes following endpoints:
 
@@ -33,14 +41,14 @@ This API exposes following endpoints:
  8. POST /api/tictactoe/game/{id}/endgame
  
 # How to run
-To compile, run tests and build, use the mvn wrapper command below. The java command will start the application at http://localhost:8080
+To compile, run tests and build, use the mvn wrapper command below. The java command will start the application at http://localhost:8080.
 
 ```bash
 $ ./mvnw clean install && java -jar target/tic-tac-toe-1.0-SNAPSHOT.jar
 ```
 
 # Access Application API
-Swagger UI is integrated into the application. Navigate to http://localhost:8080/swagger-ui.html to access the Swagger UI. Swagger UI can be used for invoking different application API's
+Swagger UI is integrated into the application. Navigate to http://localhost:8080/swagger-ui.html to access the Swagger UI. Swagger UI can be used for invoking different application API endpoints.
 
 # Endpoints
 
