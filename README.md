@@ -50,7 +50,7 @@ $ ./mvnw clean install && java -jar target/tic-tac-toe-1.0-SNAPSHOT.jar
 ```
 
 # Access Application API
-Swagger UI is integrated into the application. Navigate to http://localhost:8080/swagger-ui.html to access the Swagger UI.  
+Swagger UI is integrated into the application. Navigate to http://localhost:8080/swagger to access the Swagger UI.  
 Swagger UI can be used for invoking different application API endpoints.
 
 # Endpoints
