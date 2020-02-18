@@ -15,6 +15,11 @@ public class IndexController {
     }
 
     @RequestMapping(path = "/error")
+    public String getErrorPage() {
+        return "redirect:/swagger-ui.html";
+    }
+
+    @RequestMapping(path = "/swagger")
     public String getSwagger() {
         return "redirect:/swagger-ui.html";
     }
