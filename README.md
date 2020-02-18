@@ -16,6 +16,7 @@ Tic Tac Toe - API
 	- [6. GET /api/tictactoe/game/{id}/status](#6-get-apitictactoegameidstatus)
 	- [7. GET /api/tictactoe/game/{id}/getwinner](#7-get-apitictactoegameidgetwinner)
 	- [8. POST /api/tictactoe/game/{id}/endgame](#8-post-apitictactoegameidendgame)
+- [JavaDoc](#javadoc)
 
 <!-- /TOC -->
 
@@ -60,6 +61,9 @@ Swagger UI is integrated into the application. Navigate to http://localhost:8080
 ## 6. GET /api/tictactoe/game/{id}/status
 ## 7. GET /api/tictactoe/game/{id}/getwinner
 ## 8. POST /api/tictactoe/game/{id}/endgame
+
+# JavaDoc
+Generated JavaDocs can be found under folder `javadoc`
 
 
 
