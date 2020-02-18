@@ -1,0 +1,10 @@
+com.game.tictactoe
+com.game.tictactoe.configurations
+com.game.tictactoe.controllers
+com.game.tictactoe.integration
+com.game.tictactoe.jpa.dao
+com.game.tictactoe.jpa.dto
+com.game.tictactoe.model.catalog
+com.game.tictactoe.responses
+com.game.tictactoe.services
+com.game.tictactoe.unit
