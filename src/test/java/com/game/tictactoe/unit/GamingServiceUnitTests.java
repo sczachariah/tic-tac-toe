@@ -30,17 +30,8 @@ import static org.mockito.Matchers.anyInt;
 
 @RunWith(SpringRunner.class)
 public class GamingServiceUnitTests {
-    @TestConfiguration
-    static class GamingServiceUnitTestContextConfiguration {
-        @Bean
-        public GamingService gamingService() {
-            return new GamingService();
-        }
-    }
-
     @Autowired
     private GamingService gamingService;
-
     @MockBean
     private GameRepo gameRepo;
     @MockBean
@@ -66,6 +57,10 @@ public class GamingServiceUnitTests {
         Mockito.when(playerRepo.findByName("player2")).thenReturn(player2);
     }
 
+    /**
+     * Method : testGameCreation
+     * Unit Test method to test if a game is created properly.
+     */
     @Test
     public void testGameCreation() {
         Mockito.reset(gameRepo);
@@ -85,12 +80,20 @@ public class GamingServiceUnitTests {
                 .isEqualTo(game);
     }
 
+    /**
+     * Method : testGameListing
+     * Unit Test method to test if the games are listed correctly.
+     */
     @Test
     public void testGameListing() {
         GameResponse response = gamingService.listAllGames();
         assertThat(response.getEntities()).isNotNull();
     }
 
+    /**
+     * Method : testGameJoining
+     * Unit Test method to test the various scenarios in joining a game.
+     */
     @Test
     public void testGameJoining() {
         Mockito.reset(gameRepo);
@@ -121,6 +124,10 @@ public class GamingServiceUnitTests {
         assertThat(response.getMessage()).isEqualTo("the game has two players already.");
     }
 
+    /**
+     * Method : testJoiningFinishedGame
+     * Unit Test method to test if a player can join and already ended game.
+     */
     @Test
     public void testJoiningFinishedGame() {
         Mockito.reset(gameRepo);
@@ -144,17 +151,29 @@ public class GamingServiceUnitTests {
         assertThat(response.getMessage()).isEqualTo("the game has ended already.");
     }
 
+    /**
+     * Method : testGameState
+     * Unit Test method to test if the game state is returned correctly.
+     */
     @Test
     public void testGameState() {
         assertThat(gamingService.getGameState(1).getEntities().get(0)).isNotNull();
         assertThat(gamingService.getGameState(2).getEntities().get(0)).isNull();
     }
 
+    /**
+     * Method : testGameStatus
+     * Unit Test method to test if proper status is returned for a game.
+     */
     @Test
     public void testGameStatus() {
         assertThat(gamingService.getGameStatus(1).getEntities().get(0)).isEqualTo(GameStatus.WAITING_FOR_PLAYER);
     }
 
+    /**
+     * Method : testInvalidMoves
+     * Unit Test method to test if invalid moved are allowed in a game or not.
+     */
     @Test
     public void testInvalidMoves() {
         String[] incorrectMoves = {"a10", "b5", "c7", "d1"};
@@ -165,6 +184,10 @@ public class GamingServiceUnitTests {
         }
     }
 
+    /**
+     * Method : testIncorrectPlayer
+     * Unit test method to test if incorrect and invalid players are allowed to play a game.
+     */
     @Test
     public void testIncorrectPlayer() {
         GameResponse response = gamingService.performGameMove(1, "player1", "a2");
@@ -174,6 +197,10 @@ public class GamingServiceUnitTests {
         assertThat(response.getMessage()).isEqualTo("player testPlayerX is not part of the game.");
     }
 
+    /**
+     * Method : testMoveAlreadyMarkedPosition
+     * Unit Test method to test if a move can be performed to a position that is already marked.
+     */
     @Test
     public void testMoveAlreadyMarkedPosition() {
         Mockito.reset(gameRepo);
@@ -201,6 +228,10 @@ public class GamingServiceUnitTests {
         assertThat(response.getMessage()).isEqualTo("position a1 is already marked on the board.");
     }
 
+    /**
+     * Method : testMoveRequiresTwoPlayers
+     * Unit Test method to test if a game can be played without two players or not.
+     */
     @Test
     public void testMoveRequiresTwoPlayers() {
         Mockito.reset(gameRepo);
@@ -222,6 +253,10 @@ public class GamingServiceUnitTests {
         assertThat(response.getMessage()).isEqualTo("game requires two players. kindly wait for another player to join.");
     }
 
+    /**
+     * Method : testMoveEndedGame
+     * Unit Test method to test if a move is possible in an ended game.
+     */
     @Test
     public void testMoveEndedGame() {
         GameResponse response = gamingService.endGame(1);
@@ -232,6 +267,10 @@ public class GamingServiceUnitTests {
         assertThat(response.getMessage()).isEqualTo("cannot make a move in game that is already over.");
     }
 
+    /**
+     * Method : testGameMovesAndEvaluateWinner
+     * Unit Test method to test winner evaluation.
+     */
     @Test
     public void testGameMovesAndEvaluateWinner() {
         assertThat(gamingService.performGameMove(1, "player2", "a2")).isNotNull();
@@ -242,10 +281,22 @@ public class GamingServiceUnitTests {
         assertThat(((Player) gamingService.getGameWinner(1).getEntities().get(0)).getName()).isEqualTo("player1");
     }
 
+    /**
+     * Method : testGameEnding
+     * Unit Test method to test ending a game.
+     */
     @Test
     public void testGameEnding() {
         GameResponse response = gamingService.endGame(1);
         assertThat(((Game) response.getEntities().get(0)).getStatus()).isEqualTo(GameStatus.GAME_OVER);
         assertThat(((Game) response.getEntities().get(0)).isGameOver()).isEqualTo(true);
+    }
+
+    @TestConfiguration
+    static class GamingServiceUnitTestContextConfiguration {
+        @Bean
+        public GamingService gamingService() {
+            return new GamingService();
+        }
     }
 }

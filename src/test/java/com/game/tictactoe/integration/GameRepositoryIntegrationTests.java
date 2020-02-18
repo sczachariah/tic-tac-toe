@@ -25,7 +25,8 @@ public class GameRepositoryIntegrationTests {
     private GameRepo gameRepo;
 
     /**
-     * test to add a game to h2 db and fetch the game by id and compare the objects
+     * Method : when_add_new_game_should_return_game
+     * Integration Test method to test adding a game to h2 db and fetching the game by id and compare the objects
      */
     @Test
     public void when_add_new_game_should_return_game() {

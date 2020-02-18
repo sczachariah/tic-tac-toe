@@ -25,10 +25,11 @@ public class PlayerRepositoryIntegrationTests {
     private PlayerRepo playerRepo;
 
     /**
-     * test to add a player to h2 db and fetch the player by name and compare the objects
+     * Method : when_add_new_player_should_return_player
+     * Integration Test method to test adding a player to h2 db and fetching the player by name and compare the objects
      */
     @Test
-    public void when_add_new_player_should_return_player(){
+    public void when_add_new_player_should_return_player() {
         Player testPlayer = new Player("X");
         entityManager.persist(testPlayer);
         entityManager.flush();
