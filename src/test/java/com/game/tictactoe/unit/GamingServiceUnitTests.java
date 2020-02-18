@@ -73,13 +73,11 @@ public class GamingServiceUnitTests {
 
         Game game = new Game();
         Player player1 = new Player("player1");
-        List<Player> players = new ArrayList<>();
-        players.add(player1);
-        game.setPlayers(players);
-
-        Mockito.when(gameRepo.saveAndFlush(game)).thenReturn(game);
-        Mockito.when(gameRepo.getOne(1)).thenReturn(game);
+        Player player2 = new Player("player2");
+        Mockito.when(gameRepo.getOne(anyInt())).thenReturn(game);
         Mockito.when(playerRepo.findByName("player1")).thenReturn(player1);
+        Mockito.when(playerRepo.findByName("player2")).thenReturn(player2);
+        Mockito.when(gameRepo.saveAndFlush(any())).thenReturn(game);
 
         GameResponse response = gamingService.createGame("player1");
         assertThat(response.getEntities().get(0))
@@ -154,8 +152,7 @@ public class GamingServiceUnitTests {
 
     @Test
     public void testGameStatus() {
-        assertThat(gamingService.getGameStatus(1).getEntities().get(0)).isNotNull();
-        assertThat(gamingService.getGameStatus(2).getEntities().get(0)).isNull();
+        assertThat(gamingService.getGameStatus(1).getEntities()).isEqualTo(GameStatus.WAITING_FOR_PLAYER);
     }
 
     @Test
