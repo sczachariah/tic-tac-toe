@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 /**
  * service implementation for gaming rest api
@@ -84,19 +85,25 @@ public class GamingService {
             if (game.isGameOver()) {
                 joinGameResponse.setMessage("the game has ended already.");
             } else {
-                Player player = addPlayerToDB(playerName);
                 List<Player> players = game.getPlayers();
                 // if there is only one player
                 if (players.size() == 1) {
-                    players.add(player);
-                    // set a random player as currentplayer
-                    Random random = new Random();
-                    Player randomCurrentPlayer = players.get(random.nextInt(2));
-                    game.setCurrentPlayer(randomCurrentPlayer);
-                    game.setPlayers(players);
-                    game.setStatus(GameStatus.ACTIVE);
-                    joinGameResponse.setMessage("player " + player.getName() + " successfully joined game.")
-                            .getEntities().add(gameRepo.saveAndFlush(game));
+                    // if the player is not part of game already
+                    if (!players.get(0).getName().equals(playerName)) {
+                        Player player = addPlayerToDB(playerName);
+                        players.add(player);
+                        // set a random player as currentplayer
+                        Random random = new Random();
+                        Player randomCurrentPlayer = players.get(random.nextInt(2));
+                        game.setCurrentPlayer(randomCurrentPlayer);
+                        game.setPlayers(players);
+                        game.setStatus(GameStatus.ACTIVE);
+                        joinGameResponse.setMessage("player " + player.getName() + " successfully joined game.")
+                                .getEntities().add(gameRepo.saveAndFlush(game));
+                    }
+                    // same player cannot join game again
+                    else
+                        joinGameResponse.setMessage("player " + playerName + " has already joined the game.");
                 }
                 // a new player cannot join if the game already has two players
                 else {
@@ -128,37 +135,44 @@ public class GamingService {
             if (!game.isGameOver()) {
                 // if the game has two players
                 if (game.getPlayers().size() == 2) {
-                    // if the player can make a move next
-                    if (currentPlayer.getName().equals(playerName)) {
-                        // if the position on board is available
-                        if (game.getPlayerAtPosition(move) == null) {
-                            // mark the player to position
-                            if (game.setPlayerToPosition(move, currentPlayer)) {
-                                Player winner = evaluateGame(game);
-                                // set the other player as next player
-                                for (Player item : game.getPlayers()) {
-                                    if (!currentPlayer.equals(item)) {
-                                        game.setCurrentPlayer(item);
-                                        break;
+                    // if the player is part of game
+                    if (game.getPlayers().stream()
+                            .map(Player::getName)
+                            .collect(Collectors.toList()).contains(playerName)) {
+                        // if the player can make a move next
+                        if (currentPlayer.getName().equals(playerName)) {
+                            // if the position on board is available
+                            if (game.getPlayerAtPosition(move) == null) {
+                                // mark the player to position
+                                if (game.setPlayerToPosition(move, currentPlayer)) {
+                                    Player winner = evaluateGame(game);
+                                    // set the other player as next player
+                                    for (Player item : game.getPlayers()) {
+                                        if (!currentPlayer.equals(item)) {
+                                            game.setCurrentPlayer(item);
+                                            break;
+                                        }
                                     }
-                                }
-                                // if a winner is determined
-                                if (winner != null) {
-                                    game.setGameOver(true);
-                                    game.setWinner(winner);
-                                    game.setStatus(GameStatus.WINNER);
-                                }
-                                // if the game is a draw
-                                if (game.getStatus().equals(GameStatus.DRAW)) {
-                                    game.setGameOver(true);
-                                }
-                                performGameMoveResponse.setMessage("player " + playerName + " successfully made a move to position " + move)
-                                        .getEntities().add(gameRepo.saveAndFlush(game));
-                            }
+                                    // if a winner is determined
+                                    if (winner != null) {
+                                        game.setGameOver(true);
+                                        game.setWinner(winner);
+                                        game.setStatus(GameStatus.WINNER);
+                                    }
+                                    // if the game is a draw
+                                    if (game.getStatus().equals(GameStatus.DRAW)) {
+                                        game.setGameOver(true);
+                                    }
+                                    performGameMoveResponse.setMessage("player " + playerName + " successfully made a move to position " + move)
+                                            .getEntities().add(gameRepo.saveAndFlush(game));
+                                } else
+                                    performGameMoveResponse.setMessage("invalid position");
+                            } else
+                                performGameMoveResponse.setMessage("position " + move + " is already marked on the board.");
                         } else
-                            performGameMoveResponse.setMessage("position " + move + " is already marked on the board.");
+                            performGameMoveResponse.setMessage("player " + playerName + " is not allowed to make move.");
                     } else
-                        performGameMoveResponse.setMessage("player " + playerName + " is not allowed to move as it is not his turn.");
+                        performGameMoveResponse.setMessage("player " + playerName + " is not part of the game.");
                 } else
                     performGameMoveResponse.setMessage("game requires two players. kindly wait for another player to join.");
             } else
