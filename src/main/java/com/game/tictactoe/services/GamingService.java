@@ -5,6 +5,8 @@ import com.game.tictactoe.jpa.dao.PlayerRepo;
 import com.game.tictactoe.jpa.dto.Game;
 import com.game.tictactoe.jpa.dto.Player;
 import com.game.tictactoe.model.catalog.GameStatus;
+import com.game.tictactoe.responses.GameResponse;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,92 +32,133 @@ public class GamingService {
      * @param playerName
      * @return - game entity of the newly created game.
      */
-    public Game createGame(String playerName) {
+    public GameResponse createGame(String playerName) {
+        GameResponse createGameResponse = new GameResponse();
         try {
+            // create a game and add the player to game
             Game game = new Game();
             Player player = addPlayerToDB(playerName);
             List<Player> players = new ArrayList<>();
             players.add(player);
             game.setPlayers(players);
-            return gameRepo.saveAndFlush(game);
+            createGameResponse.setMessage("successfully created game.")
+                    .getGames().add(gameRepo.saveAndFlush(game));
         } catch (Exception ex) {
+            createGameResponse.setMessage(ExceptionUtils.getStackTrace(ex));
             ex.printStackTrace();
-            return null;
         }
+        return createGameResponse;
     }
 
-    public List<Game> listAllGames() {
+    public GameResponse listAllGames() {
+        GameResponse listAllGamesResponse = new GameResponse();
         try {
-            return gameRepo.findAll();
+            listAllGamesResponse.setMessage("successfully retrieved all games.")
+                    .getGames().addAll(gameRepo.findAll());
         } catch (Exception ex) {
+            listAllGamesResponse.setMessage(ExceptionUtils.getStackTrace(ex));
             ex.printStackTrace();
-            return null;
         }
+        return listAllGamesResponse;
     }
 
-    public Game joinGame(int id, String playerName) {
+    public GameResponse joinGame(int id, String playerName) {
+        GameResponse joinGameResponse = new GameResponse();
         try {
             Game game = gameRepo.getOne(id);
-            Player player = addPlayerToDB(playerName);
-            List<Player> players = game.getPlayers();
-            if (!players.isEmpty() & players.size() < 2) {
-                players.add(player);
-                Random random = new Random();
-                Player randomCurrentPlayer = players.get(random.nextInt(2));
-                game.setCurrentPlayer(randomCurrentPlayer);
-                game.setPlayers(players);
-                game.setStatus(GameStatus.ACTIVE);
-                gameRepo.saveAndFlush(game);
-                return game;
-            } else return null;
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return null;
-        }
-    }
-
-    public boolean performGameMove(int id, String playerName, String move) {
-        Game game = gameRepo.getOne(id);
-        Player currentPlayer = game.getCurrentPlayer();
-        try {
-            if (currentPlayer.getName().equals(playerName) & game.getPlayers().size() == 2 & !game.isGameOver()) {
-                if (game.getPlayerAtPosition(move) == null) {
-                    if (game.setPlayerToPosition(move, currentPlayer)) {
-                        Player winner = evaluateGame(game);
-                        for (Player item : game.getPlayers()) {
-                            if (!currentPlayer.equals(item)) {
-                                game.setCurrentPlayer(item);
-                                break;
-                            }
-                        }
-                        if (winner != null) {
-                            game.setGameOver(true);
-                            game.setWinner(winner);
-                            game.setStatus(GameStatus.WINNER);
-                        }
-                        if (game.getStatus().equals(GameStatus.DRAW)) {
-                            game.setGameOver(true);
-                        }
-                        gameRepo.saveAndFlush(game);
-                        return true;
-                    }
+            // cannot join a game which is over
+            if (game.isGameOver()) {
+                joinGameResponse.setMessage("the game has ended already.");
+            } else {
+                Player player = addPlayerToDB(playerName);
+                List<Player> players = game.getPlayers();
+                // if there is only one player
+                if (players.size() == 1) {
+                    players.add(player);
+                    // set a random player as currentplayer
+                    Random random = new Random();
+                    Player randomCurrentPlayer = players.get(random.nextInt(2));
+                    game.setCurrentPlayer(randomCurrentPlayer);
+                    game.setPlayers(players);
+                    game.setStatus(GameStatus.ACTIVE);
+                    joinGameResponse.setMessage("player " + player.getName() + " successfully joined game.")
+                            .getGames().add(gameRepo.saveAndFlush(game));
+                }
+                // a new player cannot join if the game already has two players
+                else {
+                    joinGameResponse.setMessage("the game has two players already.");
                 }
             }
-            return false;
         } catch (Exception ex) {
+            joinGameResponse.setMessage(ExceptionUtils.getStackTrace(ex));
             ex.printStackTrace();
-            return false;
         }
+        return joinGameResponse;
     }
 
-    public Game getGameState(int id) {
+    public GameResponse performGameMove(int id, String playerName, String move) {
+        GameResponse performGameMoveResponse = new GameResponse();
         try {
             Game game = gameRepo.getOne(id);
-            return game;
+            Player currentPlayer = game.getCurrentPlayer();
+            // if the game is active
+            if (!game.isGameOver()) {
+                // if the game has two players
+                if (game.getPlayers().size() == 2) {
+                    // if the player can make a move next
+                    if (currentPlayer.getName().equals(playerName)) {
+                        // if the position on board is available
+                        if (game.getPlayerAtPosition(move) == null) {
+                            // mark the player to position
+                            if (game.setPlayerToPosition(move, currentPlayer)) {
+                                Player winner = evaluateGame(game);
+                                // set the other player as next player
+                                for (Player item : game.getPlayers()) {
+                                    if (!currentPlayer.equals(item)) {
+                                        game.setCurrentPlayer(item);
+                                        break;
+                                    }
+                                }
+                                // if a winner is determined
+                                if (winner != null) {
+                                    game.setGameOver(true);
+                                    game.setWinner(winner);
+                                    game.setStatus(GameStatus.WINNER);
+                                }
+                                // if the game is a draw
+                                if (game.getStatus().equals(GameStatus.DRAW)) {
+                                    game.setGameOver(true);
+                                }
+                                performGameMoveResponse.setMessage("player " + playerName + " successfully made a move to position " + move)
+                                        .getGames().add(gameRepo.saveAndFlush(game));
+                            }
+                        } else
+                            performGameMoveResponse.setMessage("position " + move + " is already marked on the board.");
+                    } else
+                        performGameMoveResponse.setMessage("player " + playerName + " is not allowed to move as it is not his turn.");
+                } else
+                    performGameMoveResponse.setMessage("game requires two players. kindly wait for another player to join.");
+            } else
+                performGameMoveResponse.setMessage("cannot make a move in game that is already over.");
+
         } catch (Exception ex) {
+            performGameMoveResponse.setMessage(ExceptionUtils.getStackTrace(ex));
             ex.printStackTrace();
-            return null;
         }
+        return performGameMoveResponse;
+    }
+
+    public GameResponse getGameState(int id) {
+        GameResponse gameStateResponse = new GameResponse();
+        try {
+            Game game = gameRepo.getOne(id);
+            gameStateResponse.setMessage("successfully retrieved game state")
+                    .getGames().add(game);
+        } catch (Exception ex) {
+            gameStateResponse.setMessage(ExceptionUtils.getStackTrace(ex));
+            ex.printStackTrace();
+        }
+        return gameStateResponse;
     }
 
     public GameStatus getGameStatus(int id) {

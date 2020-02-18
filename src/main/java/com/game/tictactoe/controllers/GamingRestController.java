@@ -1,8 +1,8 @@
 package com.game.tictactoe.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.game.tictactoe.jpa.dto.Game;
 import com.game.tictactoe.model.catalog.GameStatus;
+import com.game.tictactoe.responses.GameResponse;
 import com.game.tictactoe.services.GamingService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -10,8 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * controller for gaming rest api
@@ -28,75 +26,62 @@ public class GamingRestController {
 
     @ApiOperation(value = "create a new tic-tac-toe game")
     @RequestMapping(method = RequestMethod.POST, value = "/game/create")
-    public Object createGame(@RequestParam(value = "player") String playerName) {
-        Game response = gamingService.createGame(playerName);
-        if (response != null) {
-            try {
-                System.out.println(objectMapper.writeValueAsString(response));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return response;
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("failed to create a new game");
+    public GameResponse createGame(@RequestParam(value = "player") String playerName) {
+        GameResponse response = gamingService.createGame(playerName);
+        try {
+            System.out.println(objectMapper.writeValueAsString(response));
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return response;
     }
 
     @ApiOperation(value = "list all tic-tac-toe games")
     @RequestMapping(method = RequestMethod.GET, value = "/game/listAll")
-    public Object listAllGames() {
-        List<Game> response = gamingService.listAllGames();
-        if (response != null) {
-            try {
-                System.out.println(objectMapper.writeValueAsString(response));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return response;
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("failed to list all games");
+    public GameResponse listAllGames() {
+        GameResponse response = gamingService.listAllGames();
+        try {
+            System.out.println(objectMapper.writeValueAsString(response));
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return response;
     }
 
     @ApiOperation(value = "join an active tic-tac-toe game")
     @RequestMapping(method = RequestMethod.POST, value = "/game/{id}/join")
-    public Object joinGame(@PathVariable(value = "id") int id, @RequestParam(value = "player") String playerName) {
-        Game response = gamingService.joinGame(id, playerName);
-        if (response != null) {
-            try {
-                System.out.println(objectMapper.writeValueAsString(response));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return response;
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("failed to join game with id: " + id);
+    public GameResponse joinGame(@PathVariable(value = "id") int id, @RequestParam(value = "player") String playerName) {
+        GameResponse response = gamingService.joinGame(id, playerName);
+        try {
+            System.out.println(objectMapper.writeValueAsString(response));
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return response;
     }
 
     @ApiOperation(value = "perform a move in an active tic-tac-toe game")
     @RequestMapping(method = RequestMethod.POST, value = "/game/{id}/move")
-    public ResponseEntity<String> performGameMove(@PathVariable(value = "id") int id, @RequestParam(value = "player") String playerName, @RequestParam(value = "move") String move) {
-        if (gamingService.performGameMove(id, playerName, move)) {
-            return ResponseEntity.status(HttpStatus.OK).body("player \"" + playerName + "\" made move \"" + move + "\"successfully.");
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("failed to make move \"" + move + "\" by player \"" + playerName + "\"");
+    public GameResponse performGameMove(@PathVariable(value = "id") int id, @RequestParam(value = "player") String playerName, @RequestParam(value = "move") String move) {
+        GameResponse response = gamingService.performGameMove(id, playerName, move);
+        try {
+            System.out.println(objectMapper.writeValueAsString(response));
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return response;
     }
 
     @ApiOperation(value = "get the current state of a tic-tac-toe game")
     @RequestMapping(method = RequestMethod.GET, value = "/game/{id}/state")
-    public Object getGameState(@PathVariable(value = "id") int id) {
-        Object response = gamingService.getGameState(id);
-        if (response != null) {
-            try {
-                System.out.println(objectMapper.writeValueAsString(response));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return response;
-        } else
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("failed to obtain state of game with id: " + id);
+    public GameResponse getGameState(@PathVariable(value = "id") int id) {
+        GameResponse response = gamingService.getGameState(id);
+        try {
+            System.out.println(objectMapper.writeValueAsString(response));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return response;
     }
 
     @ApiOperation(value = "get the status of a tic-tac-toe game")

@@ -3,6 +3,8 @@ package com.game.tictactoe.responses;
 import com.game.tictactoe.jpa.dto.Game;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class GameResponse {
@@ -11,6 +13,11 @@ public class GameResponse {
 
     @ApiModelProperty(notes = "The game entities associated with the response if any", readOnly = true, hidden = true)
     private List<Game> games;
+
+    public GameResponse(){
+        message = "";
+        games = new LinkedList<>();
+    }
 
     public String getMessage() {
         return message;
