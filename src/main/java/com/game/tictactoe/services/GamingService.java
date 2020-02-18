@@ -144,7 +144,7 @@ public class GamingService {
                             // if the position on board is available
                             if (game.getPlayerAtPosition(move) == null) {
                                 // mark the player to position
-                                if (game.setPlayerToPosition(move, currentPlayer)) {
+                                if (game.setPlayerToPosition(move.toLowerCase(), currentPlayer)) {
                                     Player winner = evaluateGame(game);
                                     // set the other player as next player
                                     for (Player item : game.getPlayers()) {
