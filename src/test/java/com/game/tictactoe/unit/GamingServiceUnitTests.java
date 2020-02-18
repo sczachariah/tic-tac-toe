@@ -4,6 +4,7 @@ import com.game.tictactoe.jpa.dao.GameRepo;
 import com.game.tictactoe.jpa.dao.PlayerRepo;
 import com.game.tictactoe.jpa.dto.Game;
 import com.game.tictactoe.jpa.dto.Player;
+import com.game.tictactoe.model.catalog.GameStatus;
 import com.game.tictactoe.responses.GameResponse;
 import com.game.tictactoe.services.GamingService;
 import org.junit.Before;
@@ -56,6 +57,7 @@ public class GamingServiceUnitTests {
         players.add(player2);
         game.setPlayers(players);
         game.setCurrentPlayer(player2);
+        game.setStatus(GameStatus.WAITING_FOR_PLAYER);
         game.setA1("player1");
 
         Mockito.when(gameRepo.saveAndFlush(game)).thenReturn(game);
@@ -70,14 +72,16 @@ public class GamingServiceUnitTests {
         Mockito.reset(playerRepo);
 
         Game game = new Game();
-        Player player = new Player("testPlayer");
-        Player player2 = new Player("player2");
-        Mockito.when(gameRepo.getOne(anyInt())).thenReturn(game);
-        Mockito.when(playerRepo.findByName("testPlayer")).thenReturn(player);
-        Mockito.when(playerRepo.findByName("player2")).thenReturn(player2);
-        Mockito.when(gameRepo.saveAndFlush(any())).thenReturn(game);
+        Player player1 = new Player("player1");
+        List<Player> players = new ArrayList<>();
+        players.add(player1);
+        game.setPlayers(players);
 
-        GameResponse response = gamingService.createGame("testPlayer");
+        Mockito.when(gameRepo.saveAndFlush(game)).thenReturn(game);
+        Mockito.when(gameRepo.getOne(1)).thenReturn(game);
+        Mockito.when(playerRepo.findByName("player1")).thenReturn(player1);
+
+        GameResponse response = gamingService.createGame("player1");
         assertThat(response.getEntities().get(0))
                 .isNotNull()
                 .isEqualTo(game);
@@ -86,8 +90,7 @@ public class GamingServiceUnitTests {
     @Test
     public void testGameListing() {
         GameResponse response = gamingService.listAllGames();
-        assertThat(response.getEntities().get(0))
-                .isNotNull();
+        assertThat(response.getEntities()).isNotNull();
     }
 
     @Test
@@ -121,13 +124,42 @@ public class GamingServiceUnitTests {
     }
 
     @Test
+    public void testJoiningFinishedGame() {
+        Mockito.reset(gameRepo);
+        Mockito.reset(playerRepo);
+
+        Game game = new Game();
+        Player player1 = new Player("player1");
+        Player player2 = new Player("player2");
+        List<Player> players = new ArrayList<>();
+        players.add(player1);
+        game.setPlayers(players);
+        game.setStatus(GameStatus.GAME_OVER);
+        game.setGameOver(true);
+
+        Mockito.when(gameRepo.getOne(anyInt())).thenReturn(game);
+        Mockito.when(playerRepo.findByName("player1")).thenReturn(player1);
+        Mockito.when(playerRepo.findByName("player2")).thenReturn(player2);
+        Mockito.when(gameRepo.saveAndFlush(any())).thenReturn(game);
+
+        GameResponse response = gamingService.joinGame(1, "player2");
+        assertThat(response.getMessage()).isEqualTo("the game has ended already.");
+    }
+
+    @Test
     public void testGameState() {
         assertThat(gamingService.getGameState(1).getEntities().get(0)).isNotNull();
         assertThat(gamingService.getGameState(2).getEntities().get(0)).isNull();
     }
 
     @Test
-    public void testIncorrectMoves() {
+    public void testGameStatus() {
+        assertThat(gamingService.getGameStatus(1).getEntities().get(0)).isNotNull();
+        assertThat(gamingService.getGameStatus(2).getEntities().get(0)).isNull();
+    }
+
+    @Test
+    public void testInvalidMoves() {
         String[] incorrectMoves = {"a10", "b5", "c7", "d1"};
         for (String move : incorrectMoves) {
             GameResponse response = gamingService.performGameMove(1, "player2", move);
@@ -146,6 +178,64 @@ public class GamingServiceUnitTests {
     }
 
     @Test
+    public void testMoveAlreadyMarkedPosition() {
+        Mockito.reset(gameRepo);
+        Mockito.reset(playerRepo);
+
+        Game game = new Game();
+        Player player1 = new Player("player1");
+        Player player2 = new Player("player2");
+        List<Player> players = new ArrayList<>();
+        players.add(player1);
+        players.add(player2);
+        game.setPlayers(players);
+        game.setCurrentPlayer(player2);
+        game.setStatus(GameStatus.ACTIVE);
+
+        Mockito.when(gameRepo.getOne(anyInt())).thenReturn(game);
+        Mockito.when(playerRepo.findByName("player1")).thenReturn(player1);
+        Mockito.when(playerRepo.findByName("player2")).thenReturn(player2);
+        Mockito.when(gameRepo.saveAndFlush(any())).thenReturn(game);
+
+        GameResponse response = gamingService.performGameMove(1, "player2", "a1");
+        assertThat(response.getMessage()).isEqualTo("player player2 successfully made a move to position a1");
+
+        response = gamingService.performGameMove(1, "player1", "a1");
+        assertThat(response.getMessage()).isEqualTo("position a1 is already marked on the board.");
+    }
+
+    @Test
+    public void testMoveRequiresTwoPlayers() {
+        Mockito.reset(gameRepo);
+        Mockito.reset(playerRepo);
+
+        Game game = new Game();
+        Player player1 = new Player("player1");
+        Player player2 = new Player("player2");
+        List<Player> players = new ArrayList<>();
+        players.add(player1);
+        game.setPlayers(players);
+
+        Mockito.when(gameRepo.getOne(anyInt())).thenReturn(game);
+        Mockito.when(playerRepo.findByName("player1")).thenReturn(player1);
+        Mockito.when(playerRepo.findByName("player2")).thenReturn(player2);
+        Mockito.when(gameRepo.saveAndFlush(any())).thenReturn(game);
+
+        GameResponse response = gamingService.performGameMove(1, "player1", "a2");
+        assertThat(response.getMessage()).isEqualTo("game requires two players. kindly wait for another player to join.");
+    }
+
+    @Test
+    public void testMoveEndedGame() {
+        GameResponse response = gamingService.endGame(1);
+        assertThat(((Game) response.getEntities().get(0)).getStatus()).isEqualTo(GameStatus.GAME_OVER);
+        assertThat(((Game) response.getEntities().get(0)).isGameOver()).isEqualTo(true);
+
+        response = gamingService.performGameMove(1, "player1", "a2");
+        assertThat(response.getMessage()).isEqualTo("cannot make a move in game that is already over.");
+    }
+
+    @Test
     public void testGameMovesAndEvaluateWinner() {
         assertThat(gamingService.performGameMove(1, "player2", "a2")).isNotNull();
         assertThat(gamingService.performGameMove(1, "player1", "b2")).isNotNull();
@@ -153,5 +243,12 @@ public class GamingServiceUnitTests {
         assertThat(gamingService.performGameMove(1, "player1", "c3")).isNotNull();
 
         assertThat(((Player) gamingService.getGameWinner(1).getEntities().get(0)).getName()).isEqualTo("player1");
+    }
+
+    @Test
+    public void testGameEnding() {
+        GameResponse response = gamingService.endGame(1);
+        assertThat(((Game) response.getEntities().get(0)).getStatus()).isEqualTo(GameStatus.GAME_OVER);
+        assertThat(((Game) response.getEntities().get(0)).isGameOver()).isEqualTo(true);
     }
 }
