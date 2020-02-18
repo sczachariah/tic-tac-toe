@@ -1,7 +1,7 @@
 package com.game.tictactoe.model.catalog;
 
 public enum GameStatus {
-    NONE("NONE"),
+    WAITING_FOR_PLAYER("WAITING_FOR_PLAYER"),
     ACTIVE("ACTIVE"),
     GAME_OVER("GAME_OVER"),
     DRAW("DRAW"),

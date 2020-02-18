@@ -63,6 +63,7 @@ public class Game {
     private List<Player> players;
 
     public Game() {
+        setStatus(GameStatus.WAITING_FOR_PLAYER);
     }
 
     public int getId() {
