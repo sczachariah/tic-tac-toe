@@ -152,7 +152,7 @@ public class GamingServiceUnitTests {
 
     @Test
     public void testGameStatus() {
-        assertThat(gamingService.getGameStatus(1).getEntities()).isEqualTo(GameStatus.WAITING_FOR_PLAYER);
+        assertThat(gamingService.getGameStatus(1).getEntities().get(0)).isEqualTo(GameStatus.WAITING_FOR_PLAYER);
     }
 
     @Test
