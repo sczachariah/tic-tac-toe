@@ -56,7 +56,7 @@ Swagger UI can be used for invoking different application API endpoints.
 # Endpoints
 
 ## 1. POST /api/tictactoe/game/create
-@RequestParam - player  
+@RequestParam - player (player name)  
 Creates a new game and add player to the game. The API returns the current state of game entity.
  
 ## 2. GET /api/tictactoe/game/listAll
