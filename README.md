@@ -20,8 +20,8 @@ Tic Tac Toe - API
 
 <!-- /TOC -->
 
-This Tic Tac Toe game has a grid of 3x3.
-The grids are designated with positions as shown below. To make a move, a player have to select a position.  
+Tic Tac Toe REST API is developed with Spring Boot and it uses a in-memory H2 database.
+This Tic Tac Toe game has a grid of 3x3. The grids are designated with positions as shown below. To make a move, a player have to select a position.  
 
 |     |     |     |
 | --- | --- | --- |
