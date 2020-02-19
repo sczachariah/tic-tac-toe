@@ -82,7 +82,7 @@ The API returns the current state of game entity.
 The API returns the status of the game. Game Status can be one among the below:  
 WAITING_FOR_PLAYER  - if waiting for a second player to join  
 ACTIVE              - if two players are in an active game  
-GAME_OVER           - if the game has ended
+GAME_OVER           - if the game has ended  
 DRAW                - if the game has ended in a draw  
 WINNER              - if the game has ended with a definitive winner.
 
